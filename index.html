@@ -1035,6 +1035,200 @@
     .status-pill.cloud-warn { background: rgba(245,158,11,.14); color: #d97706; border-color: rgba(245,158,11,.28); }
     .status-pill.cloud-err { background: rgba(239,68,68,.12); color: #dc2626; border-color: rgba(239,68,68,.26); }
 
+
+    /* Nexa BillSuite V11: hardcoded cloud build + mobile usability repair */
+    @media screen and (max-width: 820px) {
+      html,
+      body {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        -webkit-text-size-adjust: 100% !important;
+        text-size-adjust: 100% !important;
+      }
+      body {
+        padding: 0 !important;
+        min-height: 100dvh !important;
+      }
+      .app-shell {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        min-height: 100dvh !important;
+        display: block !important;
+        overflow: visible !important;
+      }
+      .controls {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: auto !important;
+        max-height: none !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        position: relative !important;
+        overflow: visible !important;
+        border-right: 0 !important;
+      }
+      .topbar {
+        width: 100% !important;
+        position: relative !important;
+        z-index: 40 !important;
+        padding: 12px !important;
+      }
+      .brand-row { align-items: flex-start !important; }
+      .brand-title { font-size: 17px !important; line-height: 1.2 !important; }
+      .status-pill { font-size: 10px !important; max-width: 44vw !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+      .profile-line { grid-template-columns: 1fr !important; }
+      .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+      .tabs {
+        width: 100% !important;
+        max-width: 100vw !important;
+        min-height: auto !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 10px 12px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-x: contain !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 35 !important;
+        border-right: 0 !important;
+        border-bottom: 1px solid rgba(255,255,255,.22) !important;
+        scrollbar-width: thin !important;
+      }
+      .tabs::-webkit-scrollbar,
+      .preview-wrap::-webkit-scrollbar,
+      .report-table-wrap::-webkit-scrollbar { height: 8px !important; }
+      .tabs::-webkit-scrollbar-thumb,
+      .preview-wrap::-webkit-scrollbar-thumb,
+      .report-table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.35) !important; border-radius: 999px !important; }
+      .tabs .tab-btn {
+        flex: 0 0 122px !important;
+        width: 122px !important;
+        min-width: 122px !important;
+        min-height: 48px !important;
+        padding: 10px 8px !important;
+        font-size: 11px !important;
+        line-height: 1.16 !important;
+        white-space: normal !important;
+      }
+      .tabs .nav-subgroup {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: max-content !important;
+        display: none !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-left: 0 !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+      }
+      .tabs .tab-btn.active + .nav-subgroup { display: flex !important; }
+      .tabs .nav-subtab {
+        flex: 0 0 112px !important;
+        width: 112px !important;
+        min-width: 112px !important;
+        min-height: 42px !important;
+        padding: 9px 8px !important;
+        font-size: 11px !important;
+        line-height: 1.15 !important;
+        text-align: center !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: normal !important;
+      }
+
+      .tab-content,
+      .controls .tab-content,
+      body.non-invoice .controls .tab-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: auto !important;
+        max-height: none !important;
+        height: auto !important;
+        padding: 12px !important;
+        overflow: visible !important;
+      }
+      .sticky-save {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 9px !important;
+        padding: 10px 12px 14px !important;
+        position: sticky !important;
+        bottom: 0 !important;
+        z-index: 32 !important;
+      }
+      body.non-invoice .sticky-save { display: none !important; }
+
+      .group { padding: 13px !important; margin-bottom: 12px !important; border-radius: 16px !important; }
+      .grid-2,
+      .grid-3,
+      .grid-auto,
+      .stat-row,
+      .adjustments-group .adjustment-grid,
+      .adjustments-group .payment-ref-grid,
+      .section-grid { grid-template-columns: 1fr !important; }
+      .item-actions { grid-template-columns: 1fr !important; }
+      input[type="text"], input[type="number"], input[type="date"], input[type="url"], input[type="password"], select, textarea {
+        font-size: 16px !important; /* prevents iOS/Chrome form zoom */
+        min-height: 44px !important;
+      }
+
+      .preview-wrap {
+        width: 100% !important;
+        max-width: 100vw !important;
+        min-height: auto !important;
+        display: block !important;
+        padding: 12px 0 22px !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-x: contain !important;
+      }
+      .preview-toolbar {
+        min-width: 720px !important;
+        margin: 0 12px 10px !important;
+      }
+      .preview {
+        width: 794px !important;
+        min-width: 794px !important;
+        max-width: none !important;
+        transform: none !important;
+        transform-origin: top left !important;
+        margin: 0 12px !important;
+      }
+      .invoice-content { min-width: 794px !important; padding: 34px 38px !important; }
+      .report-table-wrap {
+        width: 100% !important;
+        max-width: calc(100vw - 24px) !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+      .report-table { min-width: 760px !important; }
+      .backup-actions { grid-template-columns: 1fr !important; }
+      .modal-box { width: min(420px, 94vw) !important; }
+    }
+
+    @media screen and (max-width: 420px) {
+      .tabs .tab-btn { flex-basis: 116px !important; width: 116px !important; min-width: 116px !important; }
+      .tabs .nav-subtab { flex-basis: 106px !important; width: 106px !important; min-width: 106px !important; }
+      .sticky-save { grid-template-columns: 1fr !important; }
+      .status-pill { max-width: 40vw !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -1518,8 +1712,8 @@
     // Supabase auto-connect constants.
     // IMPORTANT: Values typed into the old browser settings panel live only in that browser's localStorage.
     // If you want a fully hardcoded build, paste your Project URL and anon public key below, or send them to be embedded.
-    const NEXA_SUPABASE_URL = ''; // e.g. https://xxxxx.supabase.co
-    const NEXA_SUPABASE_ANON_KEY = ''; // public anon key only, never service_role
+    const NEXA_SUPABASE_URL = 'https://eeyvlgeghoaffbnecxtz.supabase.co'; // Supabase project URL; /rest/v1 is added by the SDK automatically
+    const NEXA_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVleXZsZ2VnaG9hZmZibmVjeHR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTk3MDEsImV4cCI6MjA5ODAzNTcwMX0.MBJ7Ei_A9Rr5CV5JRlk4rHP3qHQjW22XfK-MOS9r-j4'; // public anon key only, never service_role
 
     const HISTORY_PAGE_SIZE = 10;
     let itemsList = [];
@@ -3338,6 +3532,12 @@ for each row execute function set_nexa_billsuite_updated_at();
       return v;
     }
 
+    function normalizeSupabaseProjectUrl(value) {
+      const v = cleanCloudCredential(value);
+      if (!v) return '';
+      return v.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/g, '');
+    }
+
     function setupCloudFromQuery() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -3358,7 +3558,7 @@ for each row execute function set_nexa_billsuite_updated_at();
 
     function getCloudConfig() {
       const stored = getStoredCloudConfig();
-      const url = cleanCloudCredential(NEXA_SUPABASE_URL) || cleanCloudCredential(stored.url);
+      const url = normalizeSupabaseProjectUrl(NEXA_SUPABASE_URL) || normalizeSupabaseProjectUrl(stored.url);
       const anonKey = cleanCloudCredential(NEXA_SUPABASE_ANON_KEY) || cleanCloudCredential(stored.anonKey);
       return { url, anonKey, enabled: !!(url && anonKey) };
     }
@@ -3648,19 +3848,8 @@ for each row execute function set_nexa_billsuite_updated_at();
       });
     }
 
-    // Browser-side guard: discourages casual copying only. Real code protection must be done by private hosting/back-end separation.
-    document.addEventListener('contextmenu', function(event) { event.preventDefault(); });
-    document.addEventListener('keydown', function(event) {
-      const key = (event.key || '').toLowerCase();
-      const blocked = event.key === 'F12'
-        || ((event.ctrlKey || event.metaKey) && key === 'u')
-        || ((event.ctrlKey || event.metaKey) && key === 's')
-        || ((event.ctrlKey || event.metaKey) && event.shiftKey && ['i','j','c'].includes(key));
-      if (blocked) {
-        event.preventDefault();
-        showAlertModal('Protected Area', 'This app is protected for internal use.');
-      }
-    });
+    // Browser-side guard intentionally relaxed so Chrome/Edge app install, save, and mobile browser menus work cleanly.
+    // Real protection must be done with hosting access control, Supabase Auth/RLS, and keeping service_role keys out of the browser.
 
   </script>
 </body>
