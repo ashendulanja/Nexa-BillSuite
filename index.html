@@ -981,6 +981,60 @@
       body.dark.non-invoice .controls .tab-content { background: var(--workspace-canvas-dark) !important; }
     }
 
+
+
+    /* Nexa BillSuite V10: auto cloud build, fixed mobile sub tabs, stable invoice sidebar */
+    #cloudPane,
+    .settings-subnav [data-settings-pane="cloudPane"],
+    .subtab-btn[onclick*="cloudPane"] { display: none !important; }
+
+    .tabs { flex-shrink: 0; }
+    .controls { align-self: stretch; }
+    .tab-content { background: var(--workspace-canvas-light, linear-gradient(135deg, rgba(248,250,252,.96), rgba(239,246,255,.92))) !important; }
+    body.dark .tab-content { background: var(--workspace-canvas-dark, linear-gradient(135deg, rgba(15,23,42,.96), rgba(2,6,23,.94))) !important; }
+
+    @media screen and (min-width: 1181px) {
+      .app-shell { align-items: stretch !important; }
+      .controls { top: 0 !important; transform: none !important; }
+      body:not(.non-invoice) .controls { position: sticky !important; top: 0 !important; }
+      body:not(.non-invoice) .tabs { height: auto !important; max-height: calc(100vh - 168px) !important; overflow-y: auto !important; }
+      body:not(.non-invoice) .controls .tab-content { max-height: calc(100vh - 252px) !important; }
+    }
+
+    @media screen and (max-width: 720px) {
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 7px !important;
+        overflow: visible !important;
+        align-items: start !important;
+      }
+      .tabs .tab-btn { min-width: 0 !important; min-height: 42px !important; padding: 9px 6px !important; }
+      .tabs .nav-subgroup {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        display: none !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        margin: -2px 0 8px 0 !important;
+        padding: 7px !important;
+        border-radius: 14px !important;
+      }
+      .tabs .tab-btn.active + .nav-subgroup { display: grid !important; }
+      .tabs .nav-subtab { min-width: 0 !important; width: 100% !important; padding: 8px 4px !important; font-size: 10px !important; text-align: center !important; }
+      .settings-subnav { display: none !important; }
+      .report-table-wrap { max-height: 58vh !important; }
+      .backupTab, #backupTab { margin-top: 0 !important; }
+    }
+
+    .cloud-live-dot {
+      display:inline-block; width:7px; height:7px; border-radius:999px; margin-right:5px; background:#10b981;
+      box-shadow:0 0 0 5px rgba(16,185,129,.12); vertical-align:middle;
+    }
+    .status-pill.cloud-ok { background: rgba(16,185,129,.14); color: #059669; border-color: rgba(16,185,129,.28); }
+    .status-pill.cloud-warn { background: rgba(245,158,11,.14); color: #d97706; border-color: rgba(245,158,11,.28); }
+    .status-pill.cloud-err { background: rgba(239,68,68,.12); color: #dc2626; border-color: rgba(239,68,68,.26); }
+
   </style>
 </head>
 <body>
@@ -1021,7 +1075,6 @@
           <button class="nav-subtab" data-settings-pane="businessPane" onclick="switchTab('settingsTab', document.querySelector('[data-tab=&quot;settingsTab&quot;]')); setSettingsPane('businessPane', this)">Business</button>
           <button class="nav-subtab" data-settings-pane="themePane" onclick="switchTab('settingsTab', document.querySelector('[data-tab=&quot;settingsTab&quot;]')); setSettingsPane('themePane', this)">Theme</button>
           <button class="nav-subtab" data-settings-pane="bankPane" onclick="switchTab('settingsTab', document.querySelector('[data-tab=&quot;settingsTab&quot;]')); setSettingsPane('bankPane', this)">Bank</button>
-          <button class="nav-subtab" data-settings-pane="cloudPane" onclick="switchTab('settingsTab', document.querySelector('[data-tab=&quot;settingsTab&quot;]')); setSettingsPane('cloudPane', this)">Cloud Sync</button>
         </div>
       </div>
 
@@ -1308,7 +1361,6 @@
           <button class="subtab-btn" onclick="setSettingsPane('businessPane', this)">Business</button>
           <button class="subtab-btn" onclick="setSettingsPane('themePane', this)">Theme</button>
           <button class="subtab-btn" onclick="setSettingsPane('bankPane', this)">Bank</button>
-          <button class="subtab-btn" onclick="setSettingsPane('cloudPane', this)">Cloud Sync</button>
         </div>
         <div class="settings-save-inline"><button class="btn accent" onclick="saveProfileSettingsLocal(true)">💾 Save Current Profile Settings</button></div>
         <div class="settings-pane active" id="profilePane">
@@ -1370,29 +1422,15 @@
           <input type="text" id="bankBranch" placeholder="Branch" oninput="updateView()">
         </div>
         </div>
-        <div class="settings-pane" id="cloudPane">
-        <div class="group cloud-locked" id="cloudSyncGroup">
-          <h3>Cloud Sync <span class="badge warn">For Admin Use</span></h3>
-          <div class="cloud-lock" id="cloudLockBox">
-            <p class="hint" style="margin:0 0 8px;">Cloud Sync settings are locked for admin use.</p>
-            <div class="grid-2">
-              <input type="password" id="cloudAdminPassword" placeholder="Admin password">
-              <button class="btn secondary" onclick="unlockCloudSync()">Unlock Cloud Sync</button>
-            </div>
-          </div>
-          <div class="cloud-config-area">
-            <p class="hint">Run the SQL schema first, then paste Project URL + anon public key. Never paste a service_role key here.</p>
-            <input type="url" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
-            <input type="password" id="supabaseAnonKey" placeholder="Supabase anon public key">
-            <label><input type="checkbox" id="enableCloudSync"> Enable cloud sync for this browser</label>
-            <div class="grid-2">
-              <button class="btn ghost" onclick="saveCloudConfig()">Save Cloud Config</button>
-              <button class="btn ghost" onclick="testSupabaseConnection()">Test</button>
-            </div>
-            <div class="grid-2" style="margin-top:10px;">
-              <button class="btn secondary" onclick="syncProfileToCloud()">Push Current Profile</button>
-              <button class="btn secondary" onclick="pullProfileFromCloud()">Pull Current Profile</button>
-            </div>
+        <div class="settings-pane hidden" id="cloudPane">
+        <div class="group" id="cloudSyncGroup">
+          <h3>Cloud Sync <span class="badge warn">Auto Connected</span></h3>
+          <p class="hint">Cloud sync is now handled inside the app. No editable database settings are shown to users.</p>
+          <div class="stat-row">
+            <div class="stat"><span>Status</span><strong id="cloudAutoStatus">Checking</strong></div>
+            <div class="stat"><span>Profile</span><strong id="cloudProfileLabel">Main</strong></div>
+            <div class="stat"><span>Realtime</span><strong id="cloudRealtimeStatus">Waiting</strong></div>
+            <div class="stat"><span>Last Sync</span><strong id="cloudLastSync">-</strong></div>
           </div>
         </div>
         </div>
@@ -1477,6 +1515,12 @@
 
   <script>
     const APP_PREFIX = 'nexa_billsuite_cloud_v1_';
+    // Supabase auto-connect constants.
+    // IMPORTANT: Values typed into the old browser settings panel live only in that browser's localStorage.
+    // If you want a fully hardcoded build, paste your Project URL and anon public key below, or send them to be embedded.
+    const NEXA_SUPABASE_URL = ''; // e.g. https://xxxxx.supabase.co
+    const NEXA_SUPABASE_ANON_KEY = ''; // public anon key only, never service_role
+
     const HISTORY_PAGE_SIZE = 10;
     let itemsList = [];
     let customersDB = [];
@@ -2933,7 +2977,61 @@ for each row execute function set_nexa_billsuite_updated_at();
       const tableHead = `<tr>${columns.map(c => `<th>${escapeExportCell(c)}</th>`).join('')}</tr>`;
       return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${escapeExportCell(title)}</title><style>
         @page{margin:12mm}*{box-sizing:border-box}body{margin:0;padding:24px;background:#eef2f7;color:#0f172a;font-family:Arial,Helvetica,sans-serif}.sheet{max-width:1180px;margin:0 auto;background:#fff;border-radius:24px;overflow:hidden;border:1px solid #dbeafe;box-shadow:0 24px 70px rgba(15,23,42,.12)}.hero{position:relative;padding:28px 30px;color:#fff;background:linear-gradient(135deg,#020617 0%,#0f172a 45%,#0ea5e9 100%)}.hero:after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.14)}.kicker{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.78;font-weight:700}.hero h1{margin:8px 0 6px;font-size:32px;letter-spacing:-.9px}.hero p{margin:0;font-size:12px;opacity:.86}.filters{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.pill{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);padding:6px 9px;border-radius:999px;font-size:10px;font-weight:700}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px 20px;background:linear-gradient(180deg,#fff,#f8fafc)}.card{border:1px solid #e2e8f0;border-radius:18px;padding:14px 15px;background:#fff;box-shadow:0 8px 20px rgba(15,23,42,.05)}.card span{display:block;color:#64748b;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px}.card strong{display:block;margin-top:6px;font-size:20px;color:#0f172a}.content{padding:0 20px 22px}.chart{border:1px solid #e2e8f0;background:linear-gradient(135deg,#f8fafc,#ffffff);border-radius:18px;padding:15px;margin-bottom:16px}.chart h2{font-size:13px;margin:0 0 12px;color:#0f172a}.bar-row{display:grid;grid-template-columns:54px 1fr 115px;gap:9px;align-items:center;margin:7px 0;font-size:11px;color:#475569}.bar-track{height:9px;border-radius:999px;background:#e2e8f0;overflow:hidden}.bar-track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#0ea5e9,#10b981)}.bar-row b{text-align:right;color:#0f172a}table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #e2e8f0;border-radius:18px}th{background:#0f172a;color:#fff;text-align:left;text-transform:uppercase;font-size:10px;letter-spacing:.6px;padding:11px 10px}td{border-bottom:1px solid #e2e8f0;padding:10px;font-size:11px;color:#1e293b}tr:nth-child(even) td{background:#f8fafc}.num{text-align:right;font-weight:700}.footer{display:flex;justify-content:space-between;gap:12px;padding:14px 20px 20px;color:#94a3b8;font-size:10px}.empty-note{color:#64748b;font-size:12px;margin:0}@media print{body{background:#fff;padding:0}.sheet{box-shadow:none;border:0;border-radius:0}.hero,.card,.chart,th,.bar-track i{-webkit-print-color-adjust:exact;print-color-adjust:exact}.content{padding:0 0 12px}.cards{padding-left:0;padding-right:0}.footer{padding-left:0;padding-right:0}}
-      </style></head><body><div class="sheet"><div class="hero"><div class="kicker">Nexa BillSuite</div><h1>${escapeExportCell(title)}</h1><p>Generated: ${new Date().toLocaleString()}</p><div class="filters">${filters.map(f=>`<span class="pill">${escapeExportCell(f)}</span>`).join('')}</div></div><div class="cards"><div class="card"><span>${escapeExportCell(l1)}</span><strong>${escapeExportCell(c1)}</strong></div><div class="card"><span>${escapeExportCell(l2)}</span><strong>${escapeExportCell(c2)}</strong></div><div class="card"><span>${escapeExportCell(l3)}</span><strong>${escapeExportCell(c3)}</strong></div><div class="card"><span>${escapeExportCell(l4)}</span><strong>${escapeExportCell(c4)}</strong></div></div><div class="content"><div class="chart"><h2>Visual Summary</h2>${buildMiniBars(barValues, formatMoney)}</div><table><thead>${tableHead}</thead><tbody>${tableRows}</tbody></table></div><div class="footer"><span>System Powered by Nexa BillSuite</span><span>${rows.length} exported rows</span></div></div></body></html>`;
+    
+
+    /* Nexa BillSuite V10: auto cloud build, fixed mobile sub tabs, stable invoice sidebar */
+    #cloudPane,
+    .settings-subnav [data-settings-pane="cloudPane"],
+    .subtab-btn[onclick*="cloudPane"] { display: none !important; }
+
+    .tabs { flex-shrink: 0; }
+    .controls { align-self: stretch; }
+    .tab-content { background: var(--workspace-canvas-light, linear-gradient(135deg, rgba(248,250,252,.96), rgba(239,246,255,.92))) !important; }
+    body.dark .tab-content { background: var(--workspace-canvas-dark, linear-gradient(135deg, rgba(15,23,42,.96), rgba(2,6,23,.94))) !important; }
+
+    @media screen and (min-width: 1181px) {
+      .app-shell { align-items: stretch !important; }
+      .controls { top: 0 !important; transform: none !important; }
+      body:not(.non-invoice) .controls { position: sticky !important; top: 0 !important; }
+      body:not(.non-invoice) .tabs { height: auto !important; max-height: calc(100vh - 168px) !important; overflow-y: auto !important; }
+      body:not(.non-invoice) .controls .tab-content { max-height: calc(100vh - 252px) !important; }
+    }
+
+    @media screen and (max-width: 720px) {
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 7px !important;
+        overflow: visible !important;
+        align-items: start !important;
+      }
+      .tabs .tab-btn { min-width: 0 !important; min-height: 42px !important; padding: 9px 6px !important; }
+      .tabs .nav-subgroup {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        display: none !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        margin: -2px 0 8px 0 !important;
+        padding: 7px !important;
+        border-radius: 14px !important;
+      }
+      .tabs .tab-btn.active + .nav-subgroup { display: grid !important; }
+      .tabs .nav-subtab { min-width: 0 !important; width: 100% !important; padding: 8px 4px !important; font-size: 10px !important; text-align: center !important; }
+      .settings-subnav { display: none !important; }
+      .report-table-wrap { max-height: 58vh !important; }
+      .backupTab, #backupTab { margin-top: 0 !important; }
+    }
+
+    .cloud-live-dot {
+      display:inline-block; width:7px; height:7px; border-radius:999px; margin-right:5px; background:#10b981;
+      box-shadow:0 0 0 5px rgba(16,185,129,.12); vertical-align:middle;
+    }
+    .status-pill.cloud-ok { background: rgba(16,185,129,.14); color: #059669; border-color: rgba(16,185,129,.28); }
+    .status-pill.cloud-warn { background: rgba(245,158,11,.14); color: #d97706; border-color: rgba(245,158,11,.28); }
+    .status-pill.cloud-err { background: rgba(239,68,68,.12); color: #dc2626; border-color: rgba(239,68,68,.26); }
+
+  </style></head><body><div class="sheet"><div class="hero"><div class="kicker">Nexa BillSuite</div><h1>${escapeExportCell(title)}</h1><p>Generated: ${new Date().toLocaleString()}</p><div class="filters">${filters.map(f=>`<span class="pill">${escapeExportCell(f)}</span>`).join('')}</div></div><div class="cards"><div class="card"><span>${escapeExportCell(l1)}</span><strong>${escapeExportCell(c1)}</strong></div><div class="card"><span>${escapeExportCell(l2)}</span><strong>${escapeExportCell(c2)}</strong></div><div class="card"><span>${escapeExportCell(l3)}</span><strong>${escapeExportCell(c3)}</strong></div><div class="card"><span>${escapeExportCell(l4)}</span><strong>${escapeExportCell(c4)}</strong></div></div><div class="content"><div class="chart"><h2>Visual Summary</h2>${buildMiniBars(barValues, formatMoney)}</div><table><thead>${tableHead}</thead><tbody>${tableRows}</tbody></table></div><div class="footer"><span>System Powered by Nexa BillSuite</span><span>${rows.length} exported rows</span></div></div></body></html>`;
     }
 
     function buildReportHtml() { return buildPremiumReportHtml(); }
@@ -3224,6 +3322,306 @@ for each row execute function set_nexa_billsuite_updated_at();
         showAlertModal('Pulled from Cloud','Supabase data pulled into this browser profile.');
       } catch(e) { updateSyncStatus('Cloud Error'); showAlertModal('Cloud Pull Failed', e.message || 'Pull failed.'); }
     }
+
+
+
+    // --- Nexa BillSuite V10: automatic Supabase + realtime sync overrides ---
+    let nexaCloudClient = null;
+    let nexaRealtimeChannel = null;
+    let nexaCloudApplying = false;
+    let nexaCloudPullTimer = null;
+    let nexaCloudBooted = false;
+
+    function cleanCloudCredential(value) {
+      const v = (value || '').trim();
+      if (!v || v.includes('PASTE_') || v.includes('xxxxx.supabase.co')) return '';
+      return v;
+    }
+
+    function setupCloudFromQuery() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const url = cleanCloudCredential(params.get('sb_url'));
+        const keyValue = cleanCloudCredential(params.get('sb_key')) || cleanCloudCredential(params.get('anon_key'));
+        if (url && keyValue) {
+          localStorage.setItem(key('cloud_config'), JSON.stringify({ url, anonKey: keyValue, enabled: true }));
+          params.delete('sb_url'); params.delete('sb_key'); params.delete('anon_key');
+          const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+          history.replaceState({}, document.title, cleanUrl);
+        }
+      } catch(e) { /* safe no-op */ }
+    }
+
+    function getStoredCloudConfig() {
+      return safeParse(localStorage.getItem(key('cloud_config')), {}) || {};
+    }
+
+    function getCloudConfig() {
+      const stored = getStoredCloudConfig();
+      const url = cleanCloudCredential(NEXA_SUPABASE_URL) || cleanCloudCredential(stored.url);
+      const anonKey = cleanCloudCredential(NEXA_SUPABASE_ANON_KEY) || cleanCloudCredential(stored.anonKey);
+      return { url, anonKey, enabled: !!(url && anonKey) };
+    }
+
+    function saveCloudConfig() {
+      // UI config has been removed. Keep this function as a safe no-op for old buttons/events.
+      const c = getCloudConfig();
+      updateSyncStatus(c.enabled ? 'Cloud Auto' : 'Cloud Key Missing');
+    }
+
+    function loadCloudConfigFields() {
+      setupCloudFromQuery();
+      const c = getCloudConfig();
+      const urlEl = document.getElementById('supabaseUrl');
+      const keyEl = document.getElementById('supabaseAnonKey');
+      const enEl = document.getElementById('enableCloudSync');
+      if (urlEl) urlEl.value = c.url || '';
+      if (keyEl) keyEl.value = c.anonKey || '';
+      if (enEl) enEl.checked = c.enabled;
+      setCloudLockState && setCloudLockState(true);
+    }
+
+    function isCloudEnabled() {
+      const c = getCloudConfig();
+      return !!(c.enabled && c.url && c.anonKey && window.supabase);
+    }
+
+    function getClient() {
+      const c = getCloudConfig();
+      if (!isCloudEnabled()) throw new Error('Supabase URL / anon key is missing in this build.');
+      if (!nexaCloudClient) {
+        nexaCloudClient = window.supabase.createClient(c.url, c.anonKey, {
+          realtime: { params: { eventsPerSecond: 4 } },
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+        });
+      }
+      return nexaCloudClient;
+    }
+
+    function updateSyncStatus(text) {
+      const el = document.getElementById('syncStatus');
+      if (!el) return;
+      const label = text || 'Cloud Ready';
+      el.classList.remove('cloud-ok','cloud-warn','cloud-err');
+      if (/error|failed|missing/i.test(label)) el.classList.add('cloud-err');
+      else if (/local|waiting|key/i.test(label)) el.classList.add('cloud-warn');
+      else el.classList.add('cloud-ok');
+      el.innerHTML = /cloud|sync|live|connected/i.test(label) && !/missing|error|failed/i.test(label)
+        ? `<span class="cloud-live-dot"></span>${escapeHtml(label)}`
+        : escapeHtml(label);
+      const cloudStatus = document.getElementById('cloudAutoStatus'); if (cloudStatus) cloudStatus.textContent = label;
+      const cloudLast = document.getElementById('cloudLastSync'); if (cloudLast && !/missing|error|waiting/i.test(label)) cloudLast.textContent = new Date().toLocaleTimeString();
+    }
+
+    function profileHasMeaningfulSettings(settings) {
+      if (!settings) return false;
+      return ['compName','compAddressLine','compPhone','compEmail','compWeb','bankName','accName','accNo','notes'].some(k => String(settings[k] || '').trim());
+    }
+
+    function localHasMeaningfulData() {
+      const settings = collectSettings ? collectSettings() : {};
+      return customersDB.length || productsDB.length || docHistory.length || draftsDB.length || profileHasMeaningfulSettings(settings);
+    }
+
+    function snapshotHasMeaningfulData(s) {
+      return !!(s && ((s.customers||[]).length || (s.products||[]).length || (s.documents||[]).length || (s.drafts||[]).length || profileHasMeaningfulSettings(s.profile?.settings)));
+    }
+
+    async function fetchCloudProfiles(sb) {
+      const { data, error } = await sb.from('invoice_profiles').select('id,name,settings,updated_at').order('updated_at', { ascending: true });
+      if (error) throw error;
+      return data || [];
+    }
+
+    async function fetchCloudSnapshot(profileId = getActiveProfileId()) {
+      const sb = getClient();
+      const [{data:p,error:e1},{data:c,error:e2},{data:pr,error:e3},{data:d,error:e4},{data:dr,error:e5}] = await Promise.all([
+        sb.from('invoice_profiles').select('*').eq('id', profileId).maybeSingle(),
+        sb.from('invoice_customers').select('*').eq('profile_id', profileId).order('updated_at', { ascending:false }),
+        sb.from('invoice_products').select('*').eq('profile_id', profileId).order('updated_at', { ascending:false }),
+        sb.from('invoice_documents').select('*').eq('profile_id', profileId).order('updated_at', { ascending:false }),
+        sb.from('invoice_drafts').select('*').eq('profile_id', profileId).order('updated_at', { ascending:false })
+      ]);
+      if (e1 || e2 || e3 || e4 || e5) throw (e1 || e2 || e3 || e4 || e5);
+      return { profile: p, customers: c || [], products: pr || [], documents: d || [], drafts: dr || [] };
+    }
+
+    function applyCloudSnapshot(snapshot, profileId = getActiveProfileId()) {
+      if (!snapshot) return;
+      if (snapshot.profile?.settings) localStorage.setItem(APP_PREFIX + profileId + '_settings', JSON.stringify(snapshot.profile.settings));
+      customersDB = (snapshot.customers || []).map(x => x.payload || { id:x.id, profileId, name:x.name, address:x.address });
+      productsDB = (snapshot.products || []).map(x => x.payload || { id:x.id, profileId, name:x.name, desc:x.description, price:x.price, warranty:x.warranty });
+      docHistory = (snapshot.documents || []).map(x => x.payload || {});
+      draftsDB = (snapshot.drafts || []).map(x => x.payload || {});
+      saveProfileDataLocal();
+      nexaCloudApplying = true;
+      try { loadProfile(); } finally { nexaCloudApplying = false; }
+      updateSyncStatus('Cloud Live');
+    }
+
+    async function ensureCloudProfile(sb = getClient()) {
+      const id = getActiveProfileId();
+      const profile = profileList.find(p => p.id === id) || { id, name: id };
+      // Insert only when missing; do not overwrite cloud settings during phone first-load.
+      const { error } = await sb.from('invoice_profiles').upsert({ id, name: profile.name || id }, { onConflict: 'id', ignoreDuplicates: true });
+      if (error) throw error;
+    }
+
+    async function pushProfileSettingsToCloud() {
+      if (!isCloudEnabled()) return;
+      const sb = getClient();
+      const { error } = await sb.from('invoice_profiles').upsert(cloudProfilePayload());
+      if (error) throw error;
+      updateSyncStatus('Profile Synced');
+    }
+
+    async function pushOneDocumentToCloud(d) { if(!isCloudEnabled()) return; const sb=getClient(); await ensureCloudProfile(sb); const { error }=await sb.from('invoice_documents').upsert(cloudDocPayload(d), { onConflict:'id' }); if(error) throw error; updateSyncStatus('Document Synced'); }
+    async function pushOneCustomerToCloud(c) { if(!isCloudEnabled()) return; const sb=getClient(); await ensureCloudProfile(sb); const { error }=await sb.from('invoice_customers').upsert(cloudCustomerPayload(c), { onConflict:'id' }); if(error) throw error; updateSyncStatus('Customer Synced'); }
+    async function pushOneProductToCloud(p) { if(!isCloudEnabled()) return; const sb=getClient(); await ensureCloudProfile(sb); const { error }=await sb.from('invoice_products').upsert(cloudProductPayload(p), { onConflict:'id' }); if(error) throw error; updateSyncStatus('Item Synced'); }
+    async function pushOneDraftToCloud(d) { if(!isCloudEnabled()) return; const sb=getClient(); await ensureCloudProfile(sb); const { error }=await sb.from('invoice_drafts').upsert(cloudDraftPayload(d), { onConflict:'id' }); if(error) throw error; updateSyncStatus('Draft Synced'); }
+
+    async function deleteCloudRow(table, id) {
+      if(!isCloudEnabled() || !id) return;
+      const sb=getClient();
+      let q = sb.from(table).delete().eq('id', id);
+      if (table !== 'invoice_profiles') q = q.eq('profile_id', getActiveProfileId());
+      const { error } = await q;
+      if(error) throw error;
+      updateSyncStatus('Cloud Updated');
+    }
+
+    async function syncProfileToCloud(options = {}) {
+      try {
+        const sb = getClient();
+        const profilePayload = cloudProfilePayload();
+        const { error: ep } = await sb.from('invoice_profiles').upsert(profilePayload, { onConflict:'id' });
+        if (ep) throw ep;
+        const cust = customersDB.map(cloudCustomerPayload);
+        const prod = productsDB.map(cloudProductPayload);
+        const docs = docHistory.map(cloudDocPayload);
+        const drafts = draftsDB.map(cloudDraftPayload);
+        if(cust.length){ const {error}=await sb.from('invoice_customers').upsert(cust, { onConflict:'id' }); if(error) throw error; }
+        if(prod.length){ const {error}=await sb.from('invoice_products').upsert(prod, { onConflict:'id' }); if(error) throw error; }
+        if(docs.length){ const {error}=await sb.from('invoice_documents').upsert(docs, { onConflict:'id' }); if(error) throw error; }
+        if(drafts.length){ const {error}=await sb.from('invoice_drafts').upsert(drafts, { onConflict:'id' }); if(error) throw error; }
+        updateSyncStatus('Cloud Synced');
+        if (!options.silent) showAlertModal('Cloud Synced','Current profile data synced to Supabase.');
+      } catch(e) { updateSyncStatus('Cloud Error'); if (!options.silent) showAlertModal('Cloud Sync Failed', e.message || 'Sync failed.'); }
+    }
+
+    async function pullProfileFromCloud(options = {}) {
+      try {
+        const id = getActiveProfileId();
+        const snapshot = await fetchCloudSnapshot(id);
+        if (snapshotHasMeaningfulData(snapshot)) {
+          applyCloudSnapshot(snapshot, id);
+          if (!options.silent) showAlertModal('Cloud Updated','Latest Supabase data loaded.');
+        } else if (localHasMeaningfulData()) {
+          await syncProfileToCloud({ silent: true });
+          updateSyncStatus('Cloud Seeded');
+          if (!options.silent) showAlertModal('Cloud Seeded','Local data was uploaded because cloud was empty.');
+        } else {
+          await ensureCloudProfile();
+          updateSyncStatus('Cloud Ready');
+        }
+      } catch(e) { updateSyncStatus('Cloud Error'); if (!options.silent) showAlertModal('Cloud Pull Failed', e.message || 'Could not load Supabase data.'); }
+    }
+
+    function scheduleCloudPull(reason = 'Realtime Update') {
+      if (!isCloudEnabled() || nexaCloudApplying) return;
+      clearTimeout(nexaCloudPullTimer);
+      nexaCloudPullTimer = setTimeout(() => pullProfileFromCloud({ silent: true, reason }), 550);
+    }
+
+    async function startRealtimeSync() {
+      if (!isCloudEnabled()) { updateSyncStatus('Cloud Key Missing'); return; }
+      const sb = getClient();
+      const id = getActiveProfileId();
+      try {
+        if (nexaRealtimeChannel) {
+          await sb.removeChannel(nexaRealtimeChannel);
+          nexaRealtimeChannel = null;
+        }
+      } catch(e) { /* no-op */ }
+      const channelName = `nexa_billsuite_live_${id}_${Math.random().toString(36).slice(2,8)}`;
+      nexaRealtimeChannel = sb.channel(channelName)
+        .on('postgres_changes', { event:'*', schema:'public', table:'invoice_profiles', filter:`id=eq.${id}` }, () => scheduleCloudPull('Profile Update'))
+        .on('postgres_changes', { event:'*', schema:'public', table:'invoice_customers', filter:`profile_id=eq.${id}` }, () => scheduleCloudPull('Customer Update'))
+        .on('postgres_changes', { event:'*', schema:'public', table:'invoice_products', filter:`profile_id=eq.${id}` }, () => scheduleCloudPull('Item Update'))
+        .on('postgres_changes', { event:'*', schema:'public', table:'invoice_documents', filter:`profile_id=eq.${id}` }, () => scheduleCloudPull('Invoice Update'))
+        .on('postgres_changes', { event:'*', schema:'public', table:'invoice_drafts', filter:`profile_id=eq.${id}` }, () => scheduleCloudPull('Draft Update'))
+        .subscribe((status) => {
+          const rs = document.getElementById('cloudRealtimeStatus');
+          if (rs) rs.textContent = status === 'SUBSCRIBED' ? 'Live' : status;
+          if (status === 'SUBSCRIBED') updateSyncStatus('Realtime Live');
+          if (status === 'CHANNEL_ERROR') updateSyncStatus('Realtime Error');
+        });
+    }
+
+    async function autoCloudBoot() {
+      if (nexaCloudBooted) return;
+      nexaCloudBooted = true;
+      setupCloudFromQuery();
+      if (!isCloudEnabled()) { updateSyncStatus('Cloud Key Missing'); return; }
+      try {
+        updateSyncStatus('Cloud Connecting');
+        const sb = getClient();
+        const profiles = await fetchCloudProfiles(sb);
+        if (profiles.length) {
+          const active = localStorage.getItem(key('active_profile')) || getActiveProfileId();
+          profileList = profiles.map(p => ({ id:p.id, name:p.name || p.id }));
+          localStorage.setItem(key('profile_list'), JSON.stringify(profileList));
+          renderProfileDropdown();
+          if (profileList.some(p => p.id === active)) document.getElementById('profileSelect').value = active;
+          else document.getElementById('profileSelect').value = profileList[0].id;
+        }
+        const pl = document.getElementById('cloudProfileLabel'); if (pl) pl.textContent = getActiveProfileId();
+        await pullProfileFromCloud({ silent: true });
+        await startRealtimeSync();
+      } catch(e) {
+        updateSyncStatus('Cloud Error');
+        console.error('Nexa BillSuite cloud boot failed:', e);
+      }
+    }
+
+    const __nexaBaseInitApp = initApp;
+    initApp = function() {
+      __nexaBaseInitApp();
+      setTimeout(autoCloudBoot, 700);
+    };
+
+    const __nexaBaseLoadProfile = loadProfile;
+    loadProfile = function() {
+      __nexaBaseLoadProfile();
+      if (!nexaCloudApplying && isCloudEnabled()) {
+        const pl = document.getElementById('cloudProfileLabel'); if (pl) pl.textContent = getActiveProfileId();
+        setTimeout(() => { pullProfileFromCloud({ silent: true }); startRealtimeSync(); }, 350);
+      }
+    };
+
+    const __nexaBaseSaveProfileSettingsLocal = saveProfileSettingsLocal;
+    saveProfileSettingsLocal = function(show = true) {
+      __nexaBaseSaveProfileSettingsLocal(show);
+      if (isCloudEnabled()) pushProfileSettingsToCloud().catch(() => updateSyncStatus('Cloud Error'));
+    };
+
+    const __nexaBaseAddNewProfile = addNewProfile;
+    addNewProfile = function() {
+      __nexaBaseAddNewProfile();
+      if (isCloudEnabled()) syncProfileToCloud({ silent: true }).then(startRealtimeSync).catch(() => updateSyncStatus('Cloud Error'));
+    };
+
+    const __nexaBaseRenameCurrentProfile = renameCurrentProfile;
+    renameCurrentProfile = function() {
+      __nexaBaseRenameCurrentProfile();
+      if (isCloudEnabled()) pushProfileSettingsToCloud().catch(() => updateSyncStatus('Cloud Error'));
+    };
+
+    const __nexaBaseDeleteCurrentProfile = deleteCurrentProfile;
+    deleteCurrentProfile = function() {
+      // keep existing confirmation flow; cloud row deletion is intentionally manual-safe to avoid cross-device accidental loss.
+      __nexaBaseDeleteCurrentProfile();
+    };
 
     document.addEventListener('DOMContentLoaded', initApp);
 
